@@ -30,7 +30,7 @@ const map < int, pair< string, vector<char> > > char_token_types = {
   { 3, { "Arithmetic Operator", { '+', '-', '*', '/' } } },
   { 4, { "Relational Operator", { '<', '>', '=' } } },
   { 5, { "Assignment Operator", { '=' } } },
-  { 6, { "Special Symbol", { '(', ')', '{', '}', ',', ';' } } }
+  { 6, { "Special Symbol", { '(', ')', '{', '}', ',', ';', ':', '?' } } }
 };
 
 // this array stores the tokens.
@@ -44,7 +44,7 @@ vector< tuple<int, string, int, int, int> > tokens;
 // this hash table is used to assign unique token_id to every
 // new token and reuse the old token_id for tokens which have
 // already been assigned an id.
-vector < pair<string, int> > token_id_map;
+map<string, int> token_id_map;
 
 
 // this function reads the words from the supplied keywords file
@@ -87,6 +87,26 @@ bool is_keyword(const string& str) {
   return false;
 }
 
+//takes a string and checks if it is a valid id or not
+bool is_id(const string& str)
+{
+  int dfa_id[3][3]=
+  {
+    {2,0,0},
+    {2,2,0},
+    {0,0,0}
+  };
+  int state=1,final_state=2;
+  for(char c: str)
+  {
+    if((c>='a' && c<='z') || (c>='A' && c<='Z') || c=='_') state=dfa_id[state-1][0];
+    else if(c>='0' && c<='9') state = dfa_id[state-1][1];
+    else state=dfa_id[state-1][2];
+    if(state==0) break;
+  }
+  if(state==final_state) return true;
+  return false;
+}
 // takes a string and checks if it is a literal or not
 // it checks for character constants like 'a'
 int is_literal(const string& str) {
@@ -111,7 +131,7 @@ int is_literal(const string& str) {
   }
   if(state==final_char) return 1;
   if(state==final_string) return 2;
-  else return 0;
+  return 0;
 }
 
 //takes a string and checks if it an integer or float
@@ -267,32 +287,40 @@ void parse_input_file(ifstream& input_file) {
         }
         // we check the type of token and process it
         else if (is_keyword(token)) {
-            token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, KEYWORD_ID, lineNo, start
+            token_id_map[token], token, KEYWORD_ID, lineNo, start
           ));
         }
         else if (is_literal(token)==1) {
-          token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, CHAR_ID, lineNo, start
+            token_id_map[token], token, CHAR_ID, lineNo, start
           ));
         }
         else if(is_literal(token)==2) {
-          token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, LITERAL_ID, lineNo, start
+            token_id_map[token], token, LITERAL_ID, lineNo, start
           ));
         }
          else if (is_integer(token)!=0) {
-          token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           if(is_integer(token)==1)
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, INTEGER_ID, lineNo, start
+            token_id_map[token], token, INTEGER_ID, lineNo, start
           ));
           else if(is_integer(token)==2)
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, FLOAT_ID, lineNo, start
+            token_id_map[token], token, FLOAT_ID, lineNo, start
           ));
         }
         else if (is_singleline_comment(token)) {
@@ -302,18 +330,18 @@ void parse_input_file(ifstream& input_file) {
           multiline_comment = true;
         }
         else {
-        token_id_map.push_back( make_pair(token,token_id_map.size()));
-        if ((token[0] >= 'a' && token[0] <= 'z')
-          || (token[0] >= 'A' && token[0] <= 'Z')
-          || token[0] == '_' )
+        if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
+        if (is_id(token))
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, IDENTIFIER_ID, lineNo, start
+            token_id_map[token], token, IDENTIFIER_ID, lineNo, start
           ));
         else
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, INVALID_IDENTIFIER_ID, lineNo, start
+            token_id_map[token], token, INVALID_IDENTIFIER_ID, lineNo, start
           ));
-      }
+        }
         if (token_char == ' ')
           start += token.length() + 1;
         else
@@ -321,9 +349,9 @@ void parse_input_file(ifstream& input_file) {
         token = "";
         if (char_is_ops) {
           string tmp_token = string({token_char});
-          token_id_map.push_back( make_pair(tmp_token,token_id_map.size()));
+          token_id_map[tmp_token]=token_id_map.size();
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, tmp_token, char_op_type, lineNo, start
+            token_id_map[tmp_token], tmp_token, char_op_type, lineNo, start
           ));
           ++start;
         }
@@ -341,46 +369,54 @@ void parse_input_file(ifstream& input_file) {
         }
       }
       else if (is_keyword(token)) {
-            token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, KEYWORD_ID, lineNo, start
+            token_id_map[token], token, KEYWORD_ID, lineNo, start
           ));
         }
         else if (is_literal(token)==1) {
-          token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, CHAR_ID, lineNo, start
+            token_id_map[token], token, CHAR_ID, lineNo, start
           ));
         }
         else if(is_literal(token)==2) {
-          token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, LITERAL_ID, lineNo, start
+            token_id_map[token], token, LITERAL_ID, lineNo, start
           ));
         }
          else if (is_integer(token)!=0) {
-          token_id_map.push_back( make_pair(token,token_id_map.size()));
+          if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
           if(is_integer(token)==1)
           tokens.push_back( make_tuple(
             token_id_map.size()-1, token, INTEGER_ID, lineNo, start
           ));
           else if(is_integer(token)==2)
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, FLOAT_ID, lineNo, start
+            token_id_map[token], token, FLOAT_ID, lineNo, start
           ));
         }
       
       else {
-        token_id_map.push_back( make_pair(token,token_id_map.size()));
-        if ((token[0] >= 'a' && token[0] <= 'z')
-          || (token[0] >= 'A' && token[0] <= 'Z')
-          || token[0] == '_' )
+        if(token_id_map.find(token) == token_id_map.end()){
+            token_id_map[token] = token_id_map.size();
+          }
+        if (is_id(token) )
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, IDENTIFIER_ID, lineNo, start
+            token_id_map[token], token, IDENTIFIER_ID, lineNo, start
           ));
         else
           tokens.push_back( make_tuple(
-            token_id_map.size()-1, token, INVALID_IDENTIFIER_ID, lineNo, start
+            token_id_map[token], token, INVALID_IDENTIFIER_ID, lineNo, start
           ));
       }
     }
