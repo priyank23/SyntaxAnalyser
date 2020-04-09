@@ -4,9 +4,12 @@ int main() {
   int a,b,1x; // even if they are not at the begining of a line
   get a;
   get b;
+  a=4.2;
   int c = a+b/2;
   char x;
-  x = (c%2 = 0) ? 'a' : 'b';
+  x = (c%2 = 0) ? 'ab' : "b";
+  char y='a';
+
   put x;
   // comment line
   return 0;

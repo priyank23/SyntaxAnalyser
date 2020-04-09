@@ -11,10 +11,10 @@
 
 // Assigning an id to these special types
 #define KEYWORD_ID 0
-#define LITERAL_ID 1
+#define LITERAL_ID 99
 #define IDENTIFIER_ID 2
 #define INTEGER_ID 7
-#define FLOAT_ID 8
+#define FLOAT_ID 99
 #define CHAR_ID 9
 #define INVALID_IDENTIFIER_ID 99
 
