@@ -200,7 +200,7 @@ void add_to_follow_first(char m,char n,map<char,string> &mpfirst,map<char,string
                 flag=1;
         }
         if(flag==0)
-            add_to_follow(m,mp,str1.at(i));
+            add_to_follow(m,mpfollow,str1.at(i));
 	}
 }
 
