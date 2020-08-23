@@ -129,6 +129,28 @@ void goto_state(struct state *I, struct state *S, char a)
 		}
 	}
 }
+
+void inmap(map<char,string> &nmap)//to assign the non terminals to first and follow map. Use -std=c++11 while compiling
+{
+	nmap.insert({'A',""});
+	nmap.insert({'B',""});
+	nmap.insert({'C',""});
+	nmap.insert({'D',""});
+	nmap.insert({'E',""});
+	nmap.insert({'F',""});
+	nmap.insert({'G',""});
+	nmap.insert({'H',""});
+	nmap.insert({'I',""});
+	nmap.insert({'J',""});
+	nmap.insert({'K',""});
+	nmap.insert({'L',""});
+	nmap.insert({'M',""});
+	nmap.insert({'N',""});
+	nmap.insert({'O',""});
+	nmap.insert({'P',""});
+	nmap.insert({'Q',""});
+	nmap.insert({'R',""});	
+}
 			
 //m is the map for first pos. 
 void add_to_first(char a,map<char,string> &m,char b)
