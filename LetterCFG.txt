@@ -1,13 +1,7 @@
 A->B
-B->a(C){DzE}
-E->D
-E->K
-E->N
-E->O
-E->zE
-E->x
-F->eG
-F->x
+B->a(C){DzL}
+C->eG
+C->x
 G->,eG
 G->x
 D->hI;
