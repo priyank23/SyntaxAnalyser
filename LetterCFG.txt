@@ -10,7 +10,7 @@ L->M
 L->K
 L->N
 L->O
-L->L
+L->xL
 L->x
 M->fb;
 M->gb;

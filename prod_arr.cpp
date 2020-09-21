@@ -292,7 +292,7 @@ int findposgoto(int st,char c){
 		if(gotoList[i].originState==st&&gotoList[i].input==c)
 			return gotoList[i].finalState;
 	}
-	cout<<"SHIFT SHIFT!!!!";
+	
 }
 
 
@@ -340,6 +340,8 @@ void add_to_first(char m,char n,map<char,string> &mp)
 void add_to_follow(char n,map<char,string> &m,char b)//b added to n
 {
 	//cout<<"In Follow";
+	if(b=='x')
+		return;
 	map<char,string>::iterator itr=m.find(n);
 	string str;
 	if(itr!=m.end())
@@ -548,43 +550,103 @@ int main()
 
 	//------------------------------------------------------//
 	initializeFirstMap(firstmap);
-	cout<<"HI!!!2\n\n\n";
 	find_first(&I,firstmap);
-	cout<<"HI!!!3\n\n\n";
-	for(int abc=0;abc<nonterminals.size();abc++){
-    for(int i=0;i<l.size();i++)
-    {
-        if(is_non_terminal(l[i][3]))
-        {
-            add_to_first(l[i][0],l[i][3],firstmap);
-        }
-    }
+	//cout<<"lol";
+	for(int t=0;t<5;t++)
+	{
+		for(int abc=0;abc<nonterminals.size();abc++){
+			for(int i=0;i<l.size();i++)
+			{
+				int j=3;
+				while(true){
+				if(is_non_terminal(l[i][j]))
+				{
+					add_to_first(l[i][0],l[i][j],firstmap);
+				}
+
+				else
+				{
+					add_to_first(l[i][0],firstmap,l[i][j]);
+					break;
+				}
+	map<char,string>::iterator itr=firstmap.find(l[i][j]);
+	string str=itr->second;
+	int foundx=str.find('x');
+	if(foundx!=string::npos)
+	{
+	j++;
+	if(j==l[i].length())
+	break;
+	}
+	else
+	break;
+	}
+	}
+	}
 	}
 	initializeFirstMap(followmap);
 	find_follow(&I,followmap);
-	add_to_follow('A',followmap,'}');
+	add_to_follow('A',followmap,'$');
 	//bool flag=false;
 	int t=0;
 	while(t<5)
 	{
-		//flag=false;
-    for(int abc=0;abc<nonterminals.size();abc++){
-        for(int i=0;i<l.size();i++){
-            for(int k=3;k<l[i].length();k++){
-            	//cout<<"\nLol";
-                if(l[i][k]==nonterminals[abc]){
-                        if(is_non_terminal(l[i][k+1])){
-                        	//flag=true;
-                            add_to_follow_first(nonterminals[abc],l[i][k+1],firstmap,followmap);}
-                        if(l[i][k+1]=='\0'){
-                        	//flag=true;
-                        	//cout<<"\n-------------------"<<nonterminals[abc]<<"-------------------------fgnxfgnsnsrn\n";
-                            add_to_follow(nonterminals[abc],l[i][0],followmap);}
-                            }
-                    }
-            }
-    }
-     t++;
+	//flag=false;
+	for(int abc=0;abc<nonterminals.size();abc++){
+	for(int i=0;i<l.size();i++){
+	for(int k=3;k<l[i].length();k++){
+	//cout<<"\nLol";
+	if(l[i][k]==nonterminals[abc]){
+	if(is_non_terminal(l[i][k+1]))
+	{
+	//flag=true;
+	add_to_follow_first(nonterminals[abc],l[i][k+1],firstmap,followmap);
+	for(int gh=k+1;gh<l[i].length()-1;gh++)
+	{
+	map<char,string>::iterator itr=firstmap.find(l[i][gh]);
+	string str=itr->second;
+	int foundx=str.find('x');
+	if(foundx!=string::npos)
+	{
+	if(is_non_terminal(l[i][gh+1])!=true)
+	{
+	add_to_follow(nonterminals[abc],followmap,l[i][gh+1]);
+	break;
+	}
+	add_to_follow_first(nonterminals[abc],l[i][gh+1],firstmap,followmap);
+	}
+	else
+	{
+	//add_to_follow_first(nonterminals[abc],l[i][gh+1],firstmap,followmap);
+	break;
+	}
+
+	}
+	}
+	if(l[i][k+1]=='\0'){
+	//flag=true;
+	//cout<<"\n-------------------"<<nonterminals[abc]<<"-------------------------fgnxfgnsnsrn\n";
+	add_to_follow(nonterminals[abc],l[i][0],followmap);
+	int k2=k;
+	while(k2>3)
+	{
+	if(is_non_terminal(l[i][k2-1])!=true)
+	break;
+	map<char,string>::iterator itr=firstmap.find(l[i][k2]);
+	string str=itr->second;
+	int foundx=str.find('x');
+	if(foundx!=string::npos)
+	{
+	add_to_follow(nonterminals[l[i][k2-1]],l[i][0],followmap);
+	}
+	k2--;
+	}
+	}
+	}
+	}
+	}
+	}
+	t++;
 	}
 	for (int i=0;i<(I.prod).size();i++)
 	{
@@ -627,7 +689,7 @@ int main()
 	}
 	// char s[1000]=getTheInputString();
 	actiontable[0][0]="s 1";
-	cout<<parser("a(){hb;ib=d;b=c;fb;b=b*b;gb;jb;}");
+	cout<<parser("a(){}");
 	// find_follow(&I,followmap);
 return 0;
 }
