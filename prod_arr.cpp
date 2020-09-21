@@ -5,6 +5,8 @@
 #include<algorithm>
 #include<string.h>
 #include<stdlib.h>
+#include<iomanip>
+#include<stack>
 using namespace std;
 vector<string> prod_ar()
 {
@@ -60,7 +62,7 @@ void add_dots(struct state *I)
 {
 	vector<string> list;
 	list = I->prod;
-	for(int i=0;i<list.size()-1;i++)
+	for(int i=0;i<list.size();i++)
 	{
 		int s = list[i].find('>');
 		// if(list[i].find('x')>=0)continue;
@@ -129,7 +131,7 @@ void closure(struct state *I0,struct state *G)
 	}
 }
 
-void goto_state(struct state *I, struct state *S, char a)
+void goto_state(struct state *I, struct state *S, char a,struct state I0)
 {
 
 	int time=1;
@@ -144,8 +146,41 @@ void goto_state(struct state *I, struct state *S, char a)
 				time++;
 			}
 			(S->prod.push_back(move_dot(I->prod[i])));
+			
 		}
 		
+	}
+
+	while(true){
+	int s=S->prod.size();
+	for(int i=0;i<S->prod.size();i++)
+	{
+		if(S->prod[i].length()-1==S->prod[i].find('.'))
+			continue;
+		
+		if(is_non_terminal(char_after_dot(S->prod[i])))
+		{
+			cout<<"State: "<<char_after_dot(S->prod[i]);
+			for(int temp=0;temp<I0.prod.size();temp++){
+				
+				if(I0.prod[temp][0]==char_after_dot(S->prod[i])){
+					cout<<"\n"<<I0.prod[temp][0]<<" "<<S->prod[i]<<"PROD ";;
+					int found=0;
+					for(int ptr=0;ptr<S->prod.size();ptr++){
+						if(S->prod[ptr].compare(I0.prod[temp])==0)
+							found=1;
+					}
+
+					if(!found)
+						{cout<<"Added!!!!!!!!!!!!!";S->prod.push_back(I0.prod[temp]);}
+				}
+			}
+			cout<<" ";
+		}
+		
+	}
+	if(S->prod.size()==s)
+	break;
 	}	
 	
 }		
@@ -198,7 +233,7 @@ void canonicalSet(struct state *I0){
 	{
 	cout<<(*I0).prod[z]<<" @ ";
 	}
-	vector<char> symbList{'a','b','c','d','e','f','g','h','i','j','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','z','=','(',')','{','}','?',':',';','>','<','+','-','*'};
+	vector<char> symbList{'a','b','c','d','e','f','g','h','i','j','A','B','C','D','G','I','J','K','L','M','N','O','P','Q','R','z','x','=','(',')','{','}','?',':',';','>','<','+','-','*'};
 	int prev_size=1;
 	while(true){
 		int si=canonSet.states.size();
@@ -209,18 +244,22 @@ void canonicalSet(struct state *I0){
 			for(int j=0;j<symbList.size();j++){
 				struct state s;
 				
-				goto_state(&canonSet.states[i],&s,symbList[j]);
+				goto_state(&canonSet.states[i],&s,symbList[j],*I0);
+				// cout<<"GOTO SUCCEED\n";
 				if(s.prod.size()!=0 && checkIfalready(s)==false)
 				{
-				// 	cout<<" Goto "<<symbList[j]<<" : "<<i<<" -> "<<(si+1)<<endl; 
+					// cout<<" Goto "<<symbList[j]<<" : "<<i<<" -> "<<(si+1)<<endl; 
 				canonSet.states.push_back(s);
+				
 				struct GotoTrans temp;
 				temp.originState=i;
 				temp.finalState=canonSet.states.size()-1;
 				temp.input=symbList[j];
 				gotoList.push_back(temp);
+				// cout<<"GOTO PUSH\n";
 				}
 			}
+					// cout<<"Next Inner Iter\n";
 		}
 		if(prev_size==canonSet.states.size())
 			break;
@@ -230,8 +269,8 @@ void canonicalSet(struct state *I0){
 	cout<<canonSet.states.size();
 }
 
-std::vector<char> terminals{'a','b','c','d','e','f','g','h','i','j','z','x','=','(',')','{','}','?',':',';','>','<','+','-','*'};
-std::vector<char> nonterminals{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R'};
+std::vector<char> terminals{'a','b','c','d','e','f','g','h','i','j','z','x','=','(',')','{','}','?','$',':',';','>','<','+','-','*'};
+std::vector<char> nonterminals{'A','B','C','D','G','I','J','K','L','M','N','O','P','Q','R'};
 	
 int findposT(char c){
 	for (int i = 0; i < terminals.size(); ++i)
@@ -241,7 +280,7 @@ int findposT(char c){
 	}
 }
 int findposNT(char c){
-	for (int i = 0; i < nonterminals.size(); ++i)
+	for (int i = 0; i < nonterminals.size();i++)
 	{
 		if(nonterminals[i]==c)
 			return i;
@@ -253,46 +292,14 @@ int findposgoto(int st,char c){
 		if(gotoList[i].originState==st&&gotoList[i].input==c)
 			return gotoList[i].finalState;
 	}
+	cout<<"SHIFT SHIFT!!!!";
 }
 
-void SLRParsingTable(){
-	// vector<vector<int> > vec( n , vector<int> (m));
-	string actiontable[canonSet.states.size()][terminals.size()];
-	int gototable[canonSet.states.size()][nonterminals.size()];
-	for(int sta=0;sta<canonSet.states.size();sta++){
-		for(int pro=0;pro<canonSet.states[sta].prod.size();pro++){
-			string temp=canonSet.states[sta].prod[pro];
-			int dotpos=temp.find('.');
-			if(dotpos==temp.length()-1){
-				// actiontable[sta];//////Todo
-				continue;
-			}
-			string s="s ";
-			s=s+to_string(findposgoto(sta,temp[dotpos+1]));
-			(actiontable[sta][findposT(temp[dotpos+1])]=s);
 
-		}
-	}
-	for(int count=0;count<gotoList.size();count++)
-	{
-		if(gotoList[count].input>='A' &&gotoList[count].input<='Z')
-			gototable[gotoList[count].originState][findposNT(gotoList[count].input)]=gotoList[count].finalState;
-	}
-	for(int sta=0;sta<canonSet.states.size();sta++){
-		for(int h=0;h<terminals.size();h++){
-			cout<<actiontable[sta][h]<<"\t";
-		}
-		for(int h=0;h<nonterminals.size();h++){
-			cout<<gototable[sta][h]<<"\t";
-		}
-		cout<<endl;
-	}
-
-}
 void initializeFirstMap(map<char,string> &m){
-	for(int i=0;i<terminals.size();i++){
+	/*for(int i=0;i<terminals.size();i++){
 		m.insert({terminals[i],""});
-	}
+	}*/
 	for(int i=0;i<nonterminals.size();i++){
 		m.insert({nonterminals[i],""});
 	}
@@ -330,19 +337,19 @@ void add_to_first(char m,char n,map<char,string> &mp)
 	}
 }
 //m is the map for follow pos.
-void add_to_follow(char n,map<char,string> &m,char b)
+void add_to_follow(char n,map<char,string> &m,char b)//b added to n
 {
-	cout<<"In Follow";
+	//cout<<"In Follow";
 	map<char,string>::iterator itr=m.find(n);
 	string str;
 	if(itr!=m.end())
 		str=itr->second;
 	
-    if(str.find(b)!=string::npos)
-    	itr->second.push_back(b);
+    if(str.find(b)==string::npos)
+    	itr->second+=(b);
 }
 
-void add_to_follow(char m,char n,map<char,string> &mp)
+void add_to_follow(char m,char n,map<char,string> &mp)//n is added to m
 {
 	map<char,string>::iterator itr1=mp.find(n);
 	map<char,string>::iterator itr2=mp.find(m);
@@ -384,7 +391,7 @@ void find_first(struct state *I,map <char,string> &mpfirst)
 {
 	vector<string> list;
 	list = I->prod;
-	for(int i=0;i<list.size()-1;i++)
+	for(int i=0;i<list.size();i++)
 	{
 		if(is_non_terminal(list[i].at(0))==true)
 			if(is_non_terminal(list[i].at(3))==false)//check position before executing. May be 2 or 4.
@@ -396,185 +403,134 @@ void find_follow(struct state *I,map <char,string> &mpfollow)
 {
 	vector<string> list;
 	list = I->prod;
-	for(int i=0;i<list.size()-1;i++)
+	for(int i=0;i<list.size();i++)
 	{
 		for(int j=3;j<list[i].length();j++)//check the index. May be 2 or 4.
 		{
 			if(is_non_terminal(list[i].at(j))==true)
-			{cout<<"before compare\n";
-				if(list[i].at(j+1)!='\0')
+			{//cout<<"\nbefore compare\n";
+				if(j+1<list[i].size())//if(list[i].at(j+1)!='\0')
 				{
+					//cout<<"\nlol";
 					if(is_non_terminal(list[i].at(j+1))==false)
-						{cout<<"before follow\n";add_to_follow(list[i].at(j),mpfollow,list[i].at(j+1));}
+						{//cout<<"before follow\n";
+							add_to_follow(list[i].at(j),mpfollow,list[i].at(j+1));}
 				}
 			}
 		}
 	}
 }
-
-
-void populateFirst(map<char,string> &firstMap,struct state *I){
-	vector<string> list=I->prod;
+string actiontable[200][100];
+int gototable[200][100];
 	
-	for(int i=0;i<terminals.size();i++){
-		map<char,string>::iterator itr=firstMap.find(terminals[i]);
-			if(itr!=firstMap.end())
-				{itr->second+=terminals[i];}
-	}
-	while(true){
-		int change=0;cout<<"Turn\n\n";
-		for(int i=0;i<list.size();i++){
-			char fChar=list[i][0];
-			int flagEpsilon=0;
-			for(int j=3;j<list[i].size();j++){
-				if(flagEpsilon)break;
-				if(list[i][j]=='.')
+void SLRParsingTable(map<char,string> followmap){
+	// vector<vector<int> > vec( n , vector<int> (m));
+	for(int sta=0;sta<canonSet.states.size();sta++){
+		for(int pro=0;pro<canonSet.states[sta].prod.size();pro++){
+			string temp=canonSet.states[sta].prod[pro];
+			if(temp.compare("A->B.")==0)
+				{
+					actiontable[sta][findposT('}')]="accept";
+					continue;
+				}
+			int dotpos=temp.find('.');
+			if(dotpos==temp.length()-1){
+				// actiontable[sta];//////Todo
+				string followOfNT=followmap.find(temp[0])->second;
+				for(int pos=0;pos<followOfNT.length();pos++){
+					string reduce="r ";
+					reduce=reduce+temp.substr(0,temp.length()-1);
+					(actiontable[sta][findposT(followOfNT[pos])]=reduce);
+				}
 				continue;
-				if(!is_non_terminal(list[i][j]))
-				{
-					map<char,string>::iterator itr=firstMap.find(list[i][0]);
-					if(itr!=firstMap.end())
-						{	
-							if(itr->second.find(list[i][j])==string::npos)
-							{
-								itr->second+=list[i][j];change++;
-							}
-						}
-				}
-				else
-				{
-					if(firstMap.find(list[i][j])->second.find('x')!=string::npos)
-					{
-						if(firstMap.find(list[i][0])->second.find('x')==string::npos)
-							{firstMap.find(list[i][0])->second+='x';change++;}
-						string s1=firstMap.find(list[i][j])->second;
-						string s2=firstMap.find(list[i][0])->second;
-						// cout<<s1<<" @@@ "<<s2<<endl;
-						string news2=s2;
-						for(int it=3;it<=s1.size();it++){
-							if(s2.find(s1[it],3)==string::npos)
-								{news2+=s1[it];change++;}
-						}
-						firstMap.find(list[i][0])->second=news2;
-					}
-					else flagEpsilon=1;
-				}
-				
 			}
-		}
-		for(int i=0;i<list.size();i++){
-			if(list[i].find('x')!=string::npos){
-				map<char,string>::iterator itr=firstMap.find(list[i][0]);
-				if(itr!=firstMap.end())
-				{
-					if(itr->second.find('x')==string::npos) 
-					{itr->second+='x';change++;}
-				}
-			}
-		}
-		
-		if(change==0)
-		break;
-
-	}
-	
-}
-
-void populateFollow(map<char,string> &followMap,map<char,string> &firstMap,struct state *I){
-	followMap.insert({'A',"$"});
-	for(int i=0;i<nonterminals.size();i++){
-		if(nonterminals[i]!='A')
-		followMap.insert({nonterminals[i],""});
-	}
-	vector<string> list=I->prod;
-	while(true){
-		int change=0;
-		
-		for(int i=0;i<list.size();i++){
-			// cout<<"&&&&&    "<<list[i]<<endl;
-			for(int j=4;j<list[i].size();j++){
-				
-				if(is_non_terminal(list[i][j]))
-				{
-					for(int k=j+1;k<list[i].size();k++){
-						// cout<<"1\n";
-						string s2=followMap.find(list[i][j])->second;
-						// cout<<"S2: "<<s2<<endl;
-						// cout<<"2\n";
-						string s1;
-						if(followMap.find(list[i][k])!=followMap.end())
-						s1=firstMap.find(list[i][k])->second;
-						// cout<<"3\n";
-						string news2=s2;
-						// cout<<s1<<" s2 "<<s2<<endl;
-						for(int it=0;it<s1.size();it++){
-							// cout<<"s2: "<<s2<<" char: "<<s1[it]<<endl;
-							if(s2.find(s1[it])==string::npos)
-								{news2+=s1[it];change++;cout<<"news2: "<<news2<<endl;}
-						}
-						// cout<<"4\n";
-						followMap.find(list[i][j])->second=news2;
-						// cout<<"5\n";
-					}
-				}
-			}
-		}
-		cout<<"3rdStep\n";
-		
-		if(change==0)
-		break;
-	}
-	int change=0;
-	for(int i=list.size()-1;i>=0;i--){
-			if(is_non_terminal(list[i][list[i].size()-1]))
-			{
-				string s2=followMap.find(list[i][0])->second;
-				string s1=followMap.find(list[i][list[i].size()-1])->second;
-				string news2=s1;
-				for(int it=0;it<s2.size();it++){
-					if(s1.find(s2[it])==string::npos)
-						{news2+=s2[it];cout<<"news3: "<<news2<<endl;change++;}
-				}
-				// cout<<"4\n";
-				followMap.find(list[i][list[i].size()-1])->second=news2;
-			}
-			for(int j=4;j<list[i].size();j++){
-				if(is_non_terminal(list[i][j]))
-				{
-					string first="";
-					for(int k=j+1;k<list[i].size();k++){
-						// cout<<"2#\n";
-						string init=first;
-						string newS;
-						if(firstMap.find(list[i][k])!=firstMap.end())
-						newS=firstMap.find(list[i][k])->second;
-						for(int it=0;it<newS.size();it++){
-							// cout<<"3#\n";
-							if(init.find(newS[it])==string::npos)
-								{init+=newS[it];change++;}
-							}
-						first=init;
-					}
-					if(first.find('x')!=string::npos)
-					{
-						string s2=followMap.find(list[i][0])->second;
-						string s1=followMap.find(list[i][j])->second;
-						string news2=s1;
-						for(int it=0;it<s2.size();it++){
-							// cout<<"5#\n";
-							if(s1.find(s2[it])==string::npos)
-								{news2+=s2[it];cout<<"news3: "<<news2<<endl;change++;}
-						}
-						// cout<<"4\n";
-						followMap.find(list[i][j])->second=news2;
-					}
-
-				}
-			}
+			string s="s ";
+			s=s+to_string(findposgoto(sta,temp[dotpos+1]));
+			// if(temp[dotpos+1]=='a')
+			// cout<<"FOUND A:   !!!!!!!!!!!!!!!!!!!"<<findposgoto(sta,temp[dotpos+1])<<endl;
+			
+			(actiontable[sta][findposT(temp[dotpos+1])]=s);
+			// cout<<"FOUND NOT:   !!!!!!!!!!!!!!!!!!!   "<<s<<" |"<<sta<<" |  "<<findposT(temp[dotpos+1])<<"~~~~"<<actiontable[sta][findposT(temp[dotpos+1])]<<endl;
 			
 		}
+	}
+	for(int count=0;count<gotoList.size();count++)
+	{
+		if(gotoList[count].input>='A' &&gotoList[count].input<='Z')
+			gototable[gotoList[count].originState][findposNT(gotoList[count].input)]=gotoList[count].finalState;
+	}
+	cout<<"`"<<setw(15);
+		for(int h=0;h<terminals.size()/2;h++){
+			cout<<terminals[h]<<setw(15);
+		}
+		// for(int h=0;h<nonterminals.size();h++){
+		// 	cout<<gototable[sta][h]<<"\t";
+		// }
+		cout<<"\n";
+		for(int sta=0;sta<canonSet.states.size();sta++){
+			cout<<sta<<setw(15);
+			for(int h=0;h<terminals.size()/2;h++){
+				string output=actiontable[sta][h];
+				cout<<output<<setw(15);
+			}
+			// for(int h=0;h<nonterminals.size();h++){
+			// 	cout<<gototable[sta][h]<<"\t";
+			// }
+			cout<<endl;
+		}
+	cout<<"|----------------------------------------------------------------------------------------------------------------|\n\n";
+		cout<<"`"<<setw(15);
+		for(int h=terminals.size()/2;h<terminals.size();h++){
+			cout<<terminals[h]<<setw(15);
+		}
+		// for(int h=0;h<nonterminals.size();h++){
+		// 	cout<<gototable[sta][h]<<"\t";
+		// }
+		cout<<"\n";
+		for(int sta=0;sta<canonSet.states.size();sta++){
+			cout<<sta<<setw(15);
+			for(int h=terminals.size()/2;h<terminals.size();h++){
+				string output=actiontable[sta][h];
+				cout<<output<<setw(15);
+			}
+			// for(int h=0;h<nonterminals.size();h++){
+			// 	cout<<gototable[sta][h]<<"\t";
+			// }
+			cout<<endl;
+		}
+
+}
+
+int parser(char input[]){
+	char nextInput=input[0];
+	int count=0;
+	stack<int> parserStack;
+	parserStack.push(0);
+	while(true){
+		int top=parserStack.top();
+		string action=actiontable[top][findposT(nextInput)];
+		cout<<"Next Input: "<<nextInput<<endl;
+		if(action.find("s")!=string::npos){
+			{parserStack.push(stoi(action.substr(action.find(" "))));
+			cout<<"Shift \n"<<action.substr(action.find(" "))<<nextInput<<"\n";
+			nextInput=input[++count];}
+		}else if(action.find("r")!=string::npos)
+		{
+			
+			string rhsProd=action.substr(5);
+			for(int i=0;i<rhsProd.length();i++)
+				parserStack.pop();
+			int t=parserStack.top();
+			cout<<"Reduce\n"<<action.substr(2)<<nextInput<<" : "<<gototable[t][findposNT(action[2])]<<"\n";;
+			parserStack.push(gototable[t][findposNT(action[2])]);
+			//output production in action
+		}
+		else if(action.compare("accept")==0)
+			return 10;
+		else
+			return 5;		
 		
-	
+	}
 }
 int main()
 {
@@ -582,54 +538,96 @@ int main()
 	l = prod_ar();
 	cout<<l.size()<<endl;;
 
-	
-	for (int i=0;i<l.size()-1;i++)
-	{
-		cout<<l[i]<<"\n";
-	}
-
-
 	map<int,string> k;
 	k = prod_index();
-	for(auto itr = k.begin(); itr!=k.end();itr++)
-	{
-		cout<<itr->first<<"	"<<itr->second;
-		cout<<"\n";
-	}
-
+	cout<<"HI!!!\n\n\n";
 
 	struct state I;
 	I.prod = l;
-	add_dots(&I);
-	for (int i=0;i<(I.prod).size()-1;i++)
+	map<char,string> firstmap,followmap;
+
+	//------------------------------------------------------//
+	initializeFirstMap(firstmap);
+	cout<<"HI!!!2\n\n\n";
+	find_first(&I,firstmap);
+	cout<<"HI!!!3\n\n\n";
+	for(int abc=0;abc<nonterminals.size();abc++){
+    for(int i=0;i<l.size();i++)
+    {
+        if(is_non_terminal(l[i][3]))
+        {
+            add_to_first(l[i][0],l[i][3],firstmap);
+        }
+    }
+	}
+	initializeFirstMap(followmap);
+	find_follow(&I,followmap);
+	add_to_follow('A',followmap,'}');
+	//bool flag=false;
+	int t=0;
+	while(t<5)
+	{
+		//flag=false;
+    for(int abc=0;abc<nonterminals.size();abc++){
+        for(int i=0;i<l.size();i++){
+            for(int k=3;k<l[i].length();k++){
+            	//cout<<"\nLol";
+                if(l[i][k]==nonterminals[abc]){
+                        if(is_non_terminal(l[i][k+1])){
+                        	//flag=true;
+                            add_to_follow_first(nonterminals[abc],l[i][k+1],firstmap,followmap);}
+                        if(l[i][k+1]=='\0'){
+                        	//flag=true;
+                        	//cout<<"\n-------------------"<<nonterminals[abc]<<"-------------------------fgnxfgnsnsrn\n";
+                            add_to_follow(nonterminals[abc],l[i][0],followmap);}
+                            }
+                    }
+            }
+    }
+     t++;
+	}
+	for (int i=0;i<(I.prod).size();i++)
 	{
 		cout<<I.prod[i]<<"\n";
 	}
+	
+	add_dots(&I);	
+	cout<<"HI!!!!5\n\n";
 	canonicalSet(&I);
+
+
+
+
 	for(int q=0;q<canonSet.states.size();q++){
+		cout<<q<<"---- ";
 		for(int r=0;r<canonSet.states[q].prod.size();r++){
 			cout<<canonSet.states[q].prod[r]<<"    ";
 		}
 		cout<<"\n";
-	}
-	map<char,string> followmap,firstmap;
-	initializeFirstMap(firstmap);
-	populateFirst(firstmap,&I);
+	}	
 
-	for (map<char,string>::iterator itr = firstmap.begin(); itr != firstmap.end(); ++itr) { 
-        cout << '\t' << itr->first 
-             << '\t' << itr->second << '\n'; 
-    } 
-	populateFollow(followmap,firstmap,&I);
 
-	for (map<char,string>::iterator itr = followmap.begin(); itr != followmap.end(); ++itr) { 
-        cout << '\t' << itr->first 
-             << '\t' << itr->second << '\n'; 
-    } 
+
 	
-	// SLRParsingTable();
+	for (map<char,string>::iterator itr = firstmap.begin(); itr != firstmap.end(); itr++) { 
+        cout << '\t' << itr->first 
+             << '\t' << itr->second << '\n'; 
+    }
+    for (map<char,string>::iterator itr = followmap.begin(); itr != followmap.end(); itr++) { 
+        cout << '\t' << itr->first 
+             << '\t' << itr->second << '\n'; 
+    }
+
+
+	
+	SLRParsingTable(followmap);
 	cout<<"\n\n\n";
-	
+	for(int i=0;i<gotoList.size();i++){
+		cout<<gotoList[i].originState<<" , "<< gotoList[i].input<<" = "<<gotoList[i].finalState<<"\n";
+	}
+	// char s[1000]=getTheInputString();
+	actiontable[0][0]="s 1";
+	cout<<parser("a(){hb;ib=d;b=c;fb;b=b*b;gb;jb;}");
 	// find_follow(&I,followmap);
 return 0;
 }
