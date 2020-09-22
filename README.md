@@ -15,4 +15,4 @@
 * Steps involved in the construction of the Compiler - 
   * [x] Construction of CFG for the language.
   * [x] Building Lexical Analyser to scan the stream of characters from a program written in above language and generate a stream of tokens to pass to the parser.
-  * [ ] Building a Bottom-up parser for this language using SLR(0) parsing technique.
+  * [x] Building a Bottom-up parser for this language using SLR(1) parsing technique.
