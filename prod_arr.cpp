@@ -278,7 +278,7 @@ void canonicalSet(struct state *I0){
 	cout<<canonSet.states.size();
 }
 
-std::vector<char> terminals{'a','b','c','d','e','f','g','h','i','j','z','x','=','(',')','{','}','?','$',':',';','>','<','+','-','*'};
+std::vector<char> terminals{'a','b','c','d','e','f','g','h','i','j','z','x','=','(',')','{','}','?','$',':',';','>','<','+','-','*','~'};
 std::vector<char> nonterminals{'A','B','C','D','G','I','J','K','L','M','N','O','P','Q','R'};
 	
 int findposT(char c){
@@ -548,6 +548,18 @@ int parser(char input[]){
 			xcheck = true;
 		}		
 		
+		stack<int> temp;
+
+		while(!parserStack.empty()) {
+			cout<<parserStack.top()<<" ";
+			temp.push(parserStack.top());
+			parserStack.pop();
+		}
+
+		while(!temp.empty()) {
+			parserStack.push(temp.top());
+			temp.pop();
+		}
 	}
 }
 int main()
@@ -705,7 +717,7 @@ int main()
 	}
 	// char s[1000]=getTheInputString();
 	actiontable[0][0]="s 1";
-	cout<<parser("a(){hb;b=c>c?c:c;gb;jc;}$");
+	cout<<parser("a(){hb;b=c>c?c:c;gb;jc;}$")<<endl;
 	// find_follow(&I,followmap);
 	return 0;
 }
