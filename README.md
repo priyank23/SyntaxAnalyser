@@ -7,7 +7,7 @@
         ```put x;```(printing x at stdout)
   * Conditional statement syntax:
      ```id = expression ? expression:expression;```
-  * Relational Operators supported: {>, <, =}
+  * Relational Operators supported: {>, <, ~}
   * Arithmetic Operators supported: {+, -, *}
   * Only ```main()``` function is supported. The function may definition may contain arguments and return statement.
   * White-spaces and new lines within statements are ignored.
