@@ -186,23 +186,26 @@ void goto_state(struct state *I, struct state *S, char a,struct state I0)
 }		
 
 
-bool checkIfalready(struct state s){
+int checkIfalready(struct state s){
 	// cout<<"checkIfAlready\n";
 	int flag=0;
 	struct canonical filter;
+	vector<int> index;
 	for(int i=0;i<canonSet.states.size();i++){
 		struct state j=canonSet.states[i];
 		if(j.prod.size()==s.prod.size())
-			{filter.states.push_back(j);}
+			{
+				filter.states.push_back(j);
+				index.push_back(i);
+			}
 	}
 	if(filter.states.size()==0)
-		return false;
+		return -1;
 	else  {
 		int noofStates=0;
 		for(int q=0;q<filter.states.size();q++){
 			int count=0;
 		for(int r=0;r<filter.states[q].prod.size();r++){
-			
 			for(int z=0;z<s.prod.size();z++)
 			{
 				if(strcmp(filter.states[q].prod[r].c_str(),s.prod[z].c_str())==0)
@@ -217,12 +220,12 @@ bool checkIfalready(struct state s){
 			if (count!=filter.states[q].prod.size())
 				noofStates+=1;
 			if (count==filter.states[q].prod.size())
-				return true;
+				return index[q];
 	}
 	if(noofStates>0)
-		return false;
-
-	return true;}
+		return -1;
+	}
+	return -1;
 }
 
 
@@ -246,7 +249,7 @@ void canonicalSet(struct state *I0){
 				
 				goto_state(&canonSet.states[i],&s,symbList[j],*I0);
 				// cout<<"GOTO SUCCEED\n";
-				if(s.prod.size()!=0 && checkIfalready(s)==false)
+				if(s.prod.size()!=0 && checkIfalready(s)==-1)
 				{
 					// cout<<" Goto "<<symbList[j]<<" : "<<i<<" -> "<<(si+1)<<endl; 
 				canonSet.states.push_back(s);
@@ -257,6 +260,12 @@ void canonicalSet(struct state *I0){
 				temp.input=symbList[j];
 				gotoList.push_back(temp);
 				// cout<<"GOTO PUSH\n";
+				} else if(s.prod.size()!=0) {
+					struct GotoTrans temp;
+					temp.originState=i;
+					temp.finalState = checkIfalready(s);
+					temp.input=symbList[j];
+					gotoList.push_back(temp);
 				}
 			}
 					// cout<<"Next Inner Iter\n";
@@ -432,7 +441,7 @@ void SLRParsingTable(map<char,string> followmap){
 			string temp=canonSet.states[sta].prod[pro];
 			if(temp.compare("A->B.")==0)
 				{
-					actiontable[sta][findposT('}')]="accept";
+					actiontable[sta][findposT('$')]="accept";
 					continue;
 				}
 			int dotpos=temp.find('.');
@@ -508,29 +517,36 @@ int parser(char input[]){
 	int count=0;
 	stack<int> parserStack;
 	parserStack.push(0);
+	bool xcheck = false;
 	while(true){
 		int top=parserStack.top();
 		string action=actiontable[top][findposT(nextInput)];
 		cout<<"Next Input: "<<nextInput<<endl;
 		if(action.find("s")!=string::npos){
-			{parserStack.push(stoi(action.substr(action.find(" "))));
+			parserStack.push(stoi(action.substr(action.find(" "))));
 			cout<<"Shift \n"<<action.substr(action.find(" "))<<nextInput<<"\n";
-			nextInput=input[++count];}
+			nextInput=input[++count];
+			xcheck = false;
 		}else if(action.find("r")!=string::npos)
 		{
-			
 			string rhsProd=action.substr(5);
 			for(int i=0;i<rhsProd.length();i++)
 				parserStack.pop();
 			int t=parserStack.top();
 			cout<<"Reduce\n"<<action.substr(2)<<nextInput<<" : "<<gototable[t][findposNT(action[2])]<<"\n";;
 			parserStack.push(gototable[t][findposNT(action[2])]);
+			xcheck = false;
 			//output production in action
 		}
-		else if(action.compare("accept")==0)
+		else if(action.compare("accept")==0) {
 			return 10;
-		else
-			return 5;		
+		}
+		else {
+			if(xcheck) return 5;
+			nextInput = 'x';
+			count--;
+			xcheck = true;
+		}		
 		
 	}
 }
@@ -689,10 +705,7 @@ int main()
 	}
 	// char s[1000]=getTheInputString();
 	actiontable[0][0]="s 1";
-	cout<<parser("a(){}");
+	cout<<parser("a(){hb;b=c>c?c:c;gb;jc;}$");
 	// find_follow(&I,followmap);
-return 0;
+	return 0;
 }
-
-	
-		

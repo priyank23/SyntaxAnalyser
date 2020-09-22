@@ -15,10 +15,13 @@ L->x
 M->fb;
 M->gb;
 K->b=J;
-N->b=P?J:J;
+N->P?J:J;
 J->N
 J->Q
 J->P
+J->b
+J->c
+J->d
 P->R>R
 P->R<R
 P->R==R
