@@ -9,6 +9,7 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "*.tcc": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "tuple": "cpp"
     }
 }

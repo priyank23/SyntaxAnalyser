@@ -1,15 +1,14 @@
-int main() {
+main() {
   /*single and multiline
   comments have been handled*/
-  int a,b,1x; // even if they are not at the begining of a line
+  int a;int b; // even if they are not at the begining of a line
+  int c;
+  char x;
   get a;
   get b;
-  a=4.2;
-  int c = a+b/2;
-  char x;
-  x = (c%2 = 0) ? 'ab' : "b";
-  char y='a';
-
+  a=4;
+  c = a+b*3;
+  x = c+2 > 0 ? 'a' : 'b';
   put x;
   // comment line
   return 0;

@@ -10,7 +10,7 @@
 using namespace std;
 vector<string> prod_ar()
 {
-	ifstream fp("LetterCFG.txt");
+	ifstream fp("./Parser/LetterCFG.txt");
 	vector<string> prod;
 	string line;
 	
@@ -160,11 +160,11 @@ void goto_state(struct state *I, struct state *S, char a,struct state I0)
 		
 		if(is_non_terminal(char_after_dot(S->prod[i])))
 		{
-			cout<<"State: "<<char_after_dot(S->prod[i]);
+			// cout<<"State: "<<char_after_dot(S->prod[i]);
 			for(int temp=0;temp<I0.prod.size();temp++){
 				
 				if(I0.prod[temp][0]==char_after_dot(S->prod[i])){
-					cout<<"\n"<<I0.prod[temp][0]<<" "<<S->prod[i]<<"PROD ";;
+					// cout<<"\n"<<I0.prod[temp][0]<<" "<<S->prod[i]<<"PROD ";;
 					int found=0;
 					for(int ptr=0;ptr<S->prod.size();ptr++){
 						if(S->prod[ptr].compare(I0.prod[temp])==0)
@@ -172,10 +172,9 @@ void goto_state(struct state *I, struct state *S, char a,struct state I0)
 					}
 
 					if(!found)
-						{cout<<"Added!!!!!!!!!!!!!";S->prod.push_back(I0.prod[temp]);}
+						{S->prod.push_back(I0.prod[temp]);}
 				}
 			}
-			cout<<" ";
 		}
 		
 	}
@@ -232,10 +231,10 @@ int checkIfalready(struct state s){
 void canonicalSet(struct state *I0){
 	canonSet.states.push_back(*I0);
 
-	for (int z = 0; z < (*I0).prod.size(); ++z)
-	{
-	cout<<(*I0).prod[z]<<" @ ";
-	}
+	// for (int z = 0; z < (*I0).prod.size(); ++z)
+	// {
+	// cout<<(*I0).prod[z]<<" @ ";
+	// }
 	vector<char> symbList{'a','b','c','d','e','f','g','h','i','j','A','B','C','D','G','I','J','K','L','M','N','O','P','Q','R','z','x','=','(',')','{','}','?',':',';','>','<','+','-','*'};
 	int prev_size=1;
 	while(true){
@@ -275,7 +274,7 @@ void canonicalSet(struct state *I0){
 		// cout<<"Next Iter\n";
 		prev_size=canonSet.states.size();
 	}
-	cout<<canonSet.states.size();
+	// cout<<canonSet.states.size();
 }
 
 std::vector<char> terminals{'a','b','c','d','e','f','g','h','i','j','z','x','=','(',')','{','}','?','$',':',';','>','<','+','-','*','~'};
@@ -512,7 +511,9 @@ void SLRParsingTable(map<char,string> followmap){
 
 }
 
-int parser(char input[]){
+bool parser(string in){
+	char input[in.length()+1];
+	strcpy(input, in.c_str());
 	char nextInput=input[0];
 	int count=0;
 	stack<int> parserStack;
@@ -539,38 +540,23 @@ int parser(char input[]){
 			//output production in action
 		}
 		else if(action.compare("accept")==0) {
-			return 10;
+			return true;
 		}
 		else {
-			if(xcheck) return 5;
+			if(xcheck) return false;
 			nextInput = 'x';
 			count--;
 			xcheck = true;
 		}		
-		
-		stack<int> temp;
-
-		while(!parserStack.empty()) {
-			cout<<parserStack.top()<<" ";
-			temp.push(parserStack.top());
-			parserStack.pop();
-		}
-
-		while(!temp.empty()) {
-			parserStack.push(temp.top());
-			temp.pop();
-		}
 	}
 }
-int main()
+bool parse(string str)
 {
 	vector<string> l;
 	l = prod_ar();
-	cout<<l.size()<<endl;;
 
 	map<int,string> k;
 	k = prod_index();
-	cout<<"HI!!!\n\n\n";
 
 	struct state I;
 	I.prod = l;
@@ -699,14 +685,14 @@ int main()
 
 
 	
-	for (map<char,string>::iterator itr = firstmap.begin(); itr != firstmap.end(); itr++) { 
-        cout << '\t' << itr->first 
-             << '\t' << itr->second << '\n'; 
-    }
-    for (map<char,string>::iterator itr = followmap.begin(); itr != followmap.end(); itr++) { 
-        cout << '\t' << itr->first 
-             << '\t' << itr->second << '\n'; 
-    }
+	// for (map<char,string>::iterator itr = firstmap.begin(); itr != firstmap.end(); itr++) { 
+    //     cout << '\t' << itr->first 
+    //          << '\t' << itr->second << '\n'; 
+    // }
+    // for (map<char,string>::iterator itr = followmap.begin(); itr != followmap.end(); itr++) { 
+    //     cout << '\t' << itr->first 
+    //          << '\t' << itr->second << '\n'; 
+    // }
 
 
 	
@@ -717,7 +703,7 @@ int main()
 	}
 	// char s[1000]=getTheInputString();
 	actiontable[0][0]="s 1";
-	cout<<parser("a(){hb;b=c>c?c:c;gb;jc;}$")<<endl;
 	// find_follow(&I,followmap);
-	return 0;
+	cout<<str<<endl;
+	return parser(str);
 }

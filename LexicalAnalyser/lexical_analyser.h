@@ -28,7 +28,7 @@ int dfa_keyword[25][26];
 // to be displayed in the type column of the output file
 const map < int, pair< string, vector<char> > > char_token_types = {
   { 3, { "Arithmetic Operator", { '+', '-', '*', '/' } } },
-  { 4, { "Relational Operator", { '<', '>', '=' } } },
+  { 4, { "Relational Operator", { '<', '>', '~' } } },
   { 5, { "Assignment Operator", { '=' } } },
   { 6, { "Special Symbol", { '(', ')', '{', '}', ',', ';', ':', '?' } } }
 };
@@ -461,27 +461,27 @@ void write_output_file(ofstream& fout) {
 }
 
 // the main driver function
-int main() {
+bool lex() {
 
   ifstream ifile;
   ofstream ofile;
-  ifile.open("keywords.txt");
+  ifile.open("./LexicalAnalyser/keywords.txt");
   if (!ifile) {
     cout << "Error opening keywords file. Aborting!\n";
-    return -1;
+    return false;
   }
   populate_keywords(ifile);
   ifile.close();
-  ifile.open("input.cpp");
+  ifile.open("./LexicalAnalyser/input.cpp");
   if (!ifile) {
     cout << "Error opening input file to analyse. Aborting!\n";
-    return -1;
+    return false;
   }
   parse_input_file(ifile);
   ifile.close();
-  ofile.open("output.txt");
+  ofile.open("./LexicalAnalyser/output.txt");
   write_output_file(ofile);
   ofile.close();
   cout << " Lexical Analysis Completed !! \n";
-  return 0;
+  return true;
 }
