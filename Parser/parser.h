@@ -350,6 +350,7 @@ void initializeFirstMap(map<char, string> &m)
 }
 
 //m is the map for first pos.
+//b is added to FIRST(a)
 void add_to_first(char a, map<char, string> &m, char b)
 {
 	map<char, string>::iterator itr = m.find(a);
@@ -380,6 +381,7 @@ void add_to_first(char m, char n, map<char, string> &mp)
 	}
 }
 //m is the map for follow pos.
+//b is added to FOLLOW(n)
 void add_to_follow(char n, map<char, string> &m, char b) //b added to n
 {
 	//cout<<"In Follow";
@@ -393,7 +395,7 @@ void add_to_follow(char n, map<char, string> &m, char b) //b added to n
 	if (str.find(b) == string::npos)
 		itr->second += (b);
 }
-
+//FOLLOW(n) is added to FOLLOW(m)
 void add_to_follow(char m, char n, map<char, string> &mp) //n is added to m
 {
 	map<char, string>::iterator itr1 = mp.find(n);
@@ -412,7 +414,7 @@ void add_to_follow(char m, char n, map<char, string> &mp) //n is added to m
 			add_to_follow(m, mp, str1.at(i));
 	}
 }
-
+//FIRST(n) is added to FOLLOW(m)
 void add_to_follow_first(char m, char n, map<char, string> &mpfirst, map<char, string> &mpfollow)
 {
 	map<char, string>::iterator itr1 = mpfirst.find(n);
@@ -431,7 +433,7 @@ void add_to_follow_first(char m, char n, map<char, string> &mpfirst, map<char, s
 			add_to_follow(m, mpfollow, str1.at(i));
 	}
 }
-
+//Terminal a added to FIRST(A). A->aB.
 void find_first(struct state *I, map<char, string> &mpfirst)
 {
 	vector<string> list;
@@ -443,7 +445,7 @@ void find_first(struct state *I, map<char, string> &mpfirst)
 				add_to_first(list[i].at(0), mpfirst, list[i].at(3));
 	}
 }
-
+//Terminal a added to FOLLOW(B). A->Ba
 void find_follow(struct state *I, map<char, string> &mpfollow)
 {
 	vector<string> list;
@@ -614,7 +616,7 @@ bool parse(string str)
 	//------------------------------------------------------//
 	initializeFirstMap(firstmap);
 	find_first(&I, firstmap);
-	
+	//FIRST Rules
 	for (int t = 0; t < 5; t++)
 	{
 		for (int abc = 0; abc < nonterminals.size(); abc++)
@@ -626,15 +628,15 @@ bool parse(string str)
 				{
 					if (is_non_terminal(l[i][j]))
 					{
-						add_to_first(l[i][0], l[i][j], firstmap);
+						add_to_first(l[i][0], l[i][j], firstmap);//A->B. FIRST(B) added to FIRST(A)
 					}
 
-					else
+					else//Terminal a added to FIRST(A). A->aB
 					{
 						add_to_first(l[i][0], firstmap, l[i][j]);
 						break;
 					}
-					map<char, string>::iterator itr = firstmap.find(l[i][j]);
+					map<char, string>::iterator itr = firstmap.find(l[i][j]);//FIRST is added for the case. A->BC. B->x.
 					string str = itr->second;
 					int foundx = str.find('x');
 					if (foundx != string::npos)
@@ -657,7 +659,7 @@ bool parse(string str)
 	while (t < 5)
 	{
 		
-		for (int abc = 0; abc < nonterminals.size(); abc++)
+		for (int abc = 0; abc < nonterminals.size(); abc++)//FOLLOW is calculated.
 		{
 			for (int i = 0; i < l.size(); i++)
 			{
@@ -666,7 +668,7 @@ bool parse(string str)
 					
 					if (l[i][k] == nonterminals[abc])
 					{
-						if (is_non_terminal(l[i][k + 1]))
+						if (is_non_terminal(l[i][k + 1]))//A->aBC. FOLLOW(B) includes FIRST(C)
 						{
 							//flag=true;
 							add_to_follow_first(nonterminals[abc], l[i][k + 1], firstmap, followmap);
@@ -691,7 +693,7 @@ bool parse(string str)
 								}
 							}
 						}
-						if (l[i][k + 1] == '\0')
+						if (l[i][k + 1] == '\0')//A->BC. FOLLOW(A) is added to FOLLOW(C). If C->x, then FOLLOW(A) is added to FOLLOW(B).
 						{
 							//flag=true;
 							//cout<<"\n-------------------"<<nonterminals[abc]<<"-------------------------fgnxfgnsnsrn\n";
