@@ -10,6 +10,8 @@
         "initializer_list": "cpp",
         "*.tcc": "cpp",
         "map": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "iosfwd": "cpp",
+        "iomanip": "cpp"
     }
 }

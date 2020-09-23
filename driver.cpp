@@ -5,10 +5,11 @@
 using namespace std;
 
 int main() {
+    cout<<"Compiler Design\n";
     if(!lex()) return 0;
     string s = printint(tokens);
     if(s=="") return 0;
-    if(parse(s)) cout<<"Accepted\n";
-    else cout<<"Error during parsing!!\n";
+    if(parse(s)) cout<<"Result:\n The Program is Syntactically Correct!!!\n\n";
+    else cout<<"Result:\n Error during parsing!!\n\n";
     return 0;
 }

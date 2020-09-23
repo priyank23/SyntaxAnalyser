@@ -258,7 +258,7 @@ void canonicalSet(struct state *I0)
 {
 	canonSet.states.push_back(*I0);
 
-	vector<char> symbList{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'A', 'B', 'C', 'D', 'G', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'z', 'x', '=', '(', ')', '{', '}', '?', ':', ';', '>', '<', '+', '-', '*','~'};
+	vector<char> symbList{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'A', 'B', 'C', 'D', 'G', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'z', 'x', '=', '(', ')', '{', '}', '?',',', ':', ';', '>', '<', '+', '-', '*','~'};
 	int prev_size = 1;
 	while (true)
 	{
@@ -305,7 +305,7 @@ void canonicalSet(struct state *I0)
 
 
 //Defining the list of terminals and non-terminals used in the grammer
-std::vector<char> terminals{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'z', 'x', '=', '(', ')', '{', '}','~', '?', '$', ':', ';', '>', '<', '+', '-', '*', '~'};
+std::vector<char> terminals{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'z', 'x', '=', '(', ')', '{', '}','~', '?', '$', ':', ';', '>', '<', '+', '-', '*', '~',','};
 std::vector<char> nonterminals{'A', 'B', 'C', 'D', 'G', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'};
 
 //Get the position of terminal column in the Parser Table
@@ -316,6 +316,7 @@ int findposT(char c)
 		if (terminals[i] == c)
 			return i;
 	}
+	
 }
 
 //Get the position of non-terminal row in the Parser Table
@@ -326,6 +327,7 @@ int findposNT(char c)
 		if (nonterminals[i] == c)
 			return i;
 	}
+	
 }
 
 //Get the Next state when an input symbol arrives
@@ -336,6 +338,7 @@ int findposgoto(int st, char c)
 		if (gotoList[i].originState == st && gotoList[i].input == c)
 			return gotoList[i].finalState;
 	}
+	
 }
 
 void initializeFirstMap(map<char, string> &m)
@@ -508,41 +511,32 @@ void SLRParsingTable(map<char, string> followmap)
 		if (gotoList[count].input >= 'A' && gotoList[count].input <= 'Z')
 			gototable[gotoList[count].originState][findposNT(gotoList[count].input)] = gotoList[count].finalState;
 	}
-	cout << "`" << setw(15);
-	for (int h = 0; h < terminals.size() / 2; h++)
+	
+	fstream ag;
+	ag.open("Parsing Table.csv",ios::out);
+	ag<<"\nStates V || Symbols->"<<setw(10);
+	for (int h = 0; h < terminals.size(); h++)
 	{
-		cout << terminals[h] << setw(15);
+		ag << terminals[h] <<"|"<< setw(15);
 	}
-	cout << "\n";
+	ag << "\n"<<setw(15);
+	for (int h = 0; h < terminals.size(); h++)
+	{
+		ag << "-----------------" << setw(15);
+	}
+	ag << "\n"<<setw(15);
 	for (int sta = 0; sta < canonSet.states.size(); sta++)
 	{
-		cout << sta << setw(15);
-		for (int h = 0; h < terminals.size() / 2; h++)
+		ag << sta<<"|"<<setw(15);
+		for (int h = 0; h < terminals.size(); h++)
 		{
 			string output = actiontable[sta][h];
-			cout << output << setw(15);
+			ag << output<<"|" << setw(15);
 		}
 		
-		cout << endl;
+		ag << endl;
 	}
-	cout << "|----------------------------------------------------------------------------------------------------------------|\n\n";
-	cout << "`" << setw(15);
-	for (int h = terminals.size() / 2; h < terminals.size(); h++)
-	{
-		cout << terminals[h] << setw(15);
-	}
-	cout << "\n";
-	for (int sta = 0; sta < canonSet.states.size(); sta++)
-	{
-		cout << sta << setw(15);
-		for (int h = terminals.size() / 2; h < terminals.size(); h++)
-		{
-			string output = actiontable[sta][h];
-			cout << output << setw(15);
-		}
-		
-		cout << endl;
-	}
+	ag.close();
 }
 
 //function which parses the input string and checks if it is correct according to the grammer defined
@@ -555,16 +549,24 @@ bool parser(string in)
 	stack<int> parserStack;
 	parserStack.push(0);
 	bool xcheck = false;
+
+	fstream f;
+	f.open("ParsingSteps.txt",ios::out);
+	f << "Action "<<setw(20)
+				 << "Production/State" <<setw(20)<< "Next Input" <<setw(20)<<" Next State" <<setw(20)<< "\n";
+			;
+	f << "-------------------------------------------------------------------------------\n";
+			;
 	while (true)
 	{
 		int top = parserStack.top();
 		string action = actiontable[top][findposT(nextInput)];
-		cout << "Next Input: " << nextInput << endl;
+		
 		if (action.find("s") != string::npos)
 		{
 			parserStack.push(stoi(action.substr(action.find(" "))));
-			cout << "Shift \n"
-				 << action.substr(action.find(" ")) << nextInput << "\n";
+			f << "Shift  "<<setw(20)
+				 << action.substr(action.find(" "))<<setw(20) << nextInput<<setw(20) << "\n";
 			nextInput = input[++count];
 			xcheck = false;
 		}
@@ -574,8 +576,8 @@ bool parser(string in)
 			for (int i = 0; i < rhsProd.length(); i++)
 				parserStack.pop();
 			int t = parserStack.top();
-			cout << "Reduce \n"
-				 << action.substr(2) << nextInput << " : " << gototable[t][findposNT(action[2])] << "\n";
+			f << "Reduce "<<setw(20)
+				 << action.substr(2) <<setw(20)<< nextInput <<setw(20) << gototable[t][findposNT(action[2])] <<setw(20)<< "\n";
 			;
 			parserStack.push(gototable[t][findposNT(action[2])]);
 			xcheck = false;
@@ -715,33 +717,35 @@ bool parse(string str)
 		}
 		t++;
 	}
-	for (int i = 0; i < (I.prod).size(); i++)
-	{
-		cout << I.prod[i] << "\n";
-	}
-
+	
 	add_dots(&I);
 	
 	canonicalSet(&I);
-
+	fstream f;
+	f.open("StatesFile.txt",ios::out);
 	for (int q = 0; q < canonSet.states.size(); q++)
 	{
-		cout << q << "---- ";
+		f <<((q<10)?"0":"")<< q << "  ----  "<<setw(10)<<std::left;
 		for (int r = 0; r < canonSet.states[q].prod.size(); r++)
 		{
-			cout << canonSet.states[q].prod[r] << "    ";
+			f<< canonSet.states[q].prod[r]<<setw(11)<<std::left;
+			f<<"\n";
 		}
-		cout << "\n";
+		f << "\n";
 	}
-
+	f.close();
 	SLRParsingTable(followmap);
 	cout << "\n\n\n";
-	// for (int i = 0; i < gotoList.size(); i++)
-	// {
-	// 	cout << gotoList[i].originState << " , " << gotoList[i].input << " = " << gotoList[i].finalState << "\n";
-	// }
-
+	
+	f.open("GotoTransitions.txt",ios::out);
+	f<<setw(15)<<"I/P State"<<setw(15)<<" Input"<<setw(15)<<"Next State"<<setw(15)<<"\n";
+	for (int i = 0; i < gotoList.size(); i++)
+	{
+		f << gotoList[i].originState <<setw(10)<< " , " <<gotoList[i].input<<setw(10)<<" => " << gotoList[i].finalState<<setw(10)<< "\n";
+	}
+	f.close();
 	actiontable[0][0] = "s 1";
-	cout << str << endl;
+	cout<<"Input To The Parser: \n ";
+	cout << str <<"\n\n";
 	return parser(str);
 }

@@ -67,11 +67,13 @@ void populate_keywords(ifstream& keywords_file) {
     }
     dfa_keyword[state-1][line[line.length()-1]-97]=25;
   }
-  cout<<"DFA created for keywords (Transition Table (50 X 26)):\n";
+  fstream f;
+  f.open("DFA_for_Lexical.txt",ios::out);
+  f<<"DFA created for keywords (Transition Table (50 X 26)):\n\n";
   for(int i=0;i<25;i++)
   {
-    for(int j=0;j<26;j++) cout<<dfa_keyword[i][j]<<" ";
-    cout<<endl;
+    for(int j=0;j<26;j++) f<<dfa_keyword[i][j]<<" ";
+    f<<endl;
   }
 }
 

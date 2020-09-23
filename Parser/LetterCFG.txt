@@ -1,5 +1,10 @@
 A->B
-B->a(){DL}
+B->a(C){DL}
+C->hbC
+C->ibC
+C->,ibC
+C->,hbC
+C->x
 D->hb;D
 D->ib;D
 D->x
@@ -13,13 +18,14 @@ M->fb;L
 M->gb;L
 K->b=J;L
 N->P?J:J
+N->(P)?J:J
 J->N
-J->Q
 J->P
 J->R
 P->R~R
 P->R>R
 P->R<R
+R->(R)
 R->Q
 R->b
 R->c

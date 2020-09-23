@@ -2,54 +2,63 @@
 ---------------------------------------------------------------------------
          0                main                  keyword         1         1
          1                   (           Special Symbol         1         5
-         2                   )           Special Symbol         1         6
-         3                   {           Special Symbol         1         8
-         4                 int                  keyword         4         3
-         5                   a                       id         4         7
-         6                   ;           Special Symbol         4         8
-         4                 int                  keyword         4         9
-         7                   b                       id         4        13
-         8                   ;           Special Symbol         4        14
-         4                 int                  keyword         5         3
-         8                   c                       id         5         7
-         9                   ;           Special Symbol         5         8
-         9                char                  keyword         6         3
-        10                   x                       id         6         8
-        11                   ;           Special Symbol         6         9
-        11                 get                  keyword         7         3
-         5                   a                       id         7         7
-        12                   ;           Special Symbol         7         8
-        11                 get                  keyword         8         3
-         7                   b                       id         8         7
-        12                   ;           Special Symbol         8         8
-         5                   a                       id         9         3
-        12                   =      Assignment Operator         9         4
-        13                   4                      int         9         5
-        14                   ;           Special Symbol         9         6
-         8                   c                       id        10         3
-        14                   =      Assignment Operator        10         5
-         5                   a                       id        10         7
-        14                   +      Arithmetic Operator        10         8
-         7                   b                       id        10         9
-        15                   *      Arithmetic Operator        10        10
-        16                   3                      int        10        11
-        17                   ;           Special Symbol        10        12
-        10                   x                       id        11         3
-        17                   =      Assignment Operator        11         5
-         8                   c                       id        11         7
-        17                   +      Arithmetic Operator        11         8
-        17                   2                      int        11         9
-        18                   ~      Relational Operator        11        11
-        19                   0                      int        11        13
-        20                   ?           Special Symbol        11        15
-        21                 'a'                     char        11        17
-        22                   :           Special Symbol        11        21
-        23                 'b'                     char        11        23
-        24                   ;           Special Symbol        11        26
-        24                 put                  keyword        12         3
-        10                   x                       id        12         7
-        25                   ;           Special Symbol        12         8
-        25              return                  keyword        14         3
-        19                   0                      int        14        10
-        26                   ;           Special Symbol        14        11
-        26                   }           Special Symbol        15         1
+         2                 int                  keyword         1         6
+         3                   a                       id         1        10
+         4                   ,           Special Symbol         1        11
+         2                 int                  keyword         1        12
+         5                   b                       id         1        16
+         6                   )           Special Symbol         1        17
+         7                   {           Special Symbol         1        19
+         2                 int                  keyword         4         3
+         3                   a                       id         4         7
+         8                   ;           Special Symbol         4         8
+         2                 int                  keyword         4         9
+         5                   b                       id         4        13
+         9                   ;           Special Symbol         4        14
+         2                 int                  keyword         5         3
+         9                   c                       id         5         7
+        10                   ;           Special Symbol         5         8
+        10                char                  keyword         6         3
+        11                   x                       id         6         8
+        12                   ;           Special Symbol         6         9
+        12                 get                  keyword         7         3
+         3                   a                       id         7         7
+        13                   ;           Special Symbol         7         8
+        12                 get                  keyword         8         3
+         5                   b                       id         8         7
+        13                   ;           Special Symbol         8         8
+         3                   a                       id         9         3
+        13                   =      Assignment Operator         9         4
+        14                   4                      int         9         5
+        15                   ;           Special Symbol         9         6
+         9                   c                       id        10         3
+        15                   =      Assignment Operator        10         5
+        15                   (           Special Symbol        10         7
+        15                   (           Special Symbol        10         8
+         3                   a                       id        10         9
+        15                   +      Arithmetic Operator        10        10
+         5                   b                       id        10        11
+        16                   )           Special Symbol        10        12
+        16                   *      Arithmetic Operator        10        13
+        17                   3                      int        10        14
+        18                   )           Special Symbol        10        15
+        18                   ;           Special Symbol        10        16
+        11                   x                       id        11         3
+        18                   =      Assignment Operator        11         5
+         9                   c                       id        11         7
+        18                   +      Arithmetic Operator        11         8
+        18                   2                      int        11         9
+        19                   ~      Relational Operator        11        11
+        20                   0                      int        11        13
+        21                   ?           Special Symbol        11        15
+        22                 'a'                     char        11        17
+        23                   :           Special Symbol        11        21
+        24                 'b'                     char        11        23
+        25                   ;           Special Symbol        11        26
+        25                 put                  keyword        12         3
+        11                   x                       id        12         7
+        26                   ;           Special Symbol        12         8
+        26              return                  keyword        14         3
+        20                   0                      int        14        10
+        27                   ;           Special Symbol        14        11
+        27                   }           Special Symbol        15         1

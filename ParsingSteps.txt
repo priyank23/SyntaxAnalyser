@@ -1,0 +1,114 @@
+Action     Production/State          Next Input          Next State                   
+-------------------------------------------------------------------------------
+Shift                     1                   a                   
+Shift                    23                   (                   
+Shift                    43                   h                   
+Shift                    67                   b                   
+Shift                    21                   ,                   
+Shift                    41                   h                   
+Shift                    65                   b                   
+Shift                    46                   x                   
+Reduce                 C->x                   )                  81                   
+Reduce              C->,hbC                   )                  50                   
+Reduce               C->hbC                   )                  45                   
+Shift                    69                   )                   
+Shift                    83                   {                   
+Shift                    74                   h                   
+Shift                    85                   b                   
+Shift                    51                   ;                   
+Shift                    74                   h                   
+Shift                    85                   b                   
+Shift                    51                   ;                   
+Shift                    74                   h                   
+Shift                    85                   b                   
+Shift                    51                   ;                   
+Shift                    75                   i                   
+Shift                    86                   b                   
+Shift                    53                   ;                   
+Shift                    77                   x                   
+Reduce                 D->x                   f                  78                   
+Reduce              D->ib;D                   f                  76                   
+Reduce              D->hb;D                   f                  76                   
+Reduce              D->hb;D                   f                  76                   
+Reduce              D->hb;D                   f                  89                   
+Shift                     5                   f                   
+Shift                    25                   b                   
+Shift                    48                   ;                   
+Shift                     5                   f                   
+Shift                    25                   b                   
+Shift                    48                   ;                   
+Shift                     2                   b                   
+Shift                    24                   =                   
+Shift                     3                   c                   
+Reduce                 R->c                   ;                  18                   
+Reduce                 J->R                   ;                  47                   
+Shift                    70                   ;                   
+Shift                     2                   b                   
+Shift                    24                   =                   
+Shift                    20                   (                   
+Shift                    31                   (                   
+Shift                    29                   b                   
+Reduce                 R->b                   +                  55                   
+Shift                    35                   +                   
+Shift                    29                   b                   
+Reduce                 R->b                   )                  59                   
+Reduce               Q->R+R                   )                  17                   
+Reduce                 R->Q                   )                  55                   
+Shift                    64                   )                   
+Reduce               R->(R)                   *                  40                   
+Shift                    37                   *                   
+Shift                     3                   c                   
+Reduce                 R->c                   )                  61                   
+Reduce               Q->R*R                   )                  17                   
+Reduce                 R->Q                   )                  40                   
+Shift                    64                   )                   
+Reduce               R->(R)                   ;                  18                   
+Reduce                 J->R                   ;                  47                   
+Shift                    70                   ;                   
+Shift                     2                   b                   
+Shift                    24                   =                   
+Shift                    29                   b                   
+Reduce                 R->b                   +                  18                   
+Shift                    35                   +                   
+Shift                     3                   c                   
+Reduce                 R->c                   ~                  59                   
+Reduce               Q->R+R                   ~                  17                   
+Reduce                 R->Q                   ~                  18                   
+Shift                    38                   ~                   
+Shift                     3                   c                   
+Reduce                 R->c                   ?                  62                   
+Reduce               P->R~R                   ?                  16                   
+Shift                    32                   ?                   
+Shift                     4                   d                   
+Reduce                 R->d                   :                  18                   
+Reduce                 J->R                   :                  56                   
+Shift                    79                   :                   
+Shift                     4                   d                   
+Reduce                 R->d                   ;                  18                   
+Reduce                 J->R                   ;                  87                   
+Reduce             N->P?J:J                   ;                  14                   
+Reduce                 J->N                   ;                  47                   
+Shift                    70                   ;                   
+Shift                     6                   g                   
+Shift                    26                   b                   
+Shift                    49                   ;                   
+Shift                     9                   j                   
+Shift                     3                   c                   
+Reduce                 R->c                   ;                  30                   
+Shift                    54                   ;                   
+Reduce               O->jR;                   }                  15                   
+Reduce                 L->O                   }                  73                   
+Reduce              M->gb;L                   }                  13                   
+Reduce                 L->M                   }                  84                   
+Reduce             K->b=J;L                   }                  12                   
+Reduce                 L->K                   }                  84                   
+Reduce             K->b=J;L                   }                  12                   
+Reduce                 L->K                   }                  84                   
+Reduce             K->b=J;L                   }                  12                   
+Reduce                 L->K                   }                  71                   
+Reduce              M->fb;L                   }                  13                   
+Reduce                 L->M                   }                  71                   
+Reduce              M->fb;L                   }                  13                   
+Reduce                 L->M                   }                  91                   
+Shift                    93                   }                   
+Reduce          B->a(C){DL}                   $                  10                   

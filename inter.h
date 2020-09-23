@@ -46,7 +46,7 @@ string printint(vector< tuple<int, string, int, int, int> > store)
 	}
 	//outp.close();
 	output += "$";
-	cout<<output<<endl;
+	
  	return output;
 }
 /*int main()
