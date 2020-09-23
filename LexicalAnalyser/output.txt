@@ -39,7 +39,7 @@
          8                   c                       id        11         7
         17                   +      Arithmetic Operator        11         8
         17                   2                      int        11         9
-        18                   >      Relational Operator        11        11
+        18                   ~      Relational Operator        11        11
         19                   0                      int        11        13
         20                   ?           Special Symbol        11        15
         21                 'a'                     char        11        17

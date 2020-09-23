@@ -17,6 +17,7 @@ J->N
 J->Q
 J->P
 J->R
+P->R~R
 P->R>R
 P->R<R
 R->Q
