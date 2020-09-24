@@ -20,25 +20,25 @@
 ---
 ### File Description
 #### CFG
-  * mod.txt: Map from symbols of the language to letters of CFG
-  * LetterCFG.txt: CFG grammar productions
-  * augCFG.txt: Human readable CFG grammar production
+  * `mod.txt`: Map from symbols of the language to letters of CFG
+  * `LetterCFG.txt`: CFG grammar productions
+  * `augCFG.txt`: Human readable CFG grammar production
   
 #### INPUT
-  * input.cpp: Input file to analyse
-  * keywords.txt: File for keywords
+  * `input.cpp`: Input file to analyse
+  * `keywords.txt`: File for keywords
   
 #### OUTPUT
-  * output.txt: Output from Lexical Analyser
-  * DFA_for_Lexical.txt: DFA states
-  * StatesFile.txt: Item set created
-  * GoToTransitions.txt: Goto (I,a) for all item set
-  * Parsing Table.csv: SLR parsing table
+  * `tokens.txt`: Output from Lexical Analyser
+  * `DFA_for_Lexical.txt`: DFA states
+  * `StatesFile.txt`: Item set created
+  * `GoToTransitions.txt`: Goto (I,a) for all item set
+  * `Parsing Table.csv`: SLR parsing table
 ---
 ### Steps to run
   * Put the file to be analysed in `input.cpp`
   * Open a terminal and go to the project's directory
   * Run command `g++ -o compile driver.cpp -w`
-  * Run command `./compile`
+  * Run command `./compile input_file`
   
 ---

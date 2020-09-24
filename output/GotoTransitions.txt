@@ -1,5 +1,5 @@
-I/P State       Input         Next State     
-              0 ,        a =>       1
+I/P State       Input    Next State
+         0 ,        a =>       1
          0 ,        b =>       2
          0 ,        c =>       3
          0 ,        d =>       4

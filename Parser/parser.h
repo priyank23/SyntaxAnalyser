@@ -737,17 +737,16 @@ bool parse(string str)
 	}
 	f.close();
 	SLRParsingTable(followmap);
-	cout << "\n\n\n";
 	
 	f.open("./output/GotoTransitions.txt",ios::out);
-	f<<setw(15)<<"I/P State"<<setw(15)<<" Input"<<setw(15)<<"Next State"<<setw(15)<<"\n";
+	f<<setw(15)<<"I/P State"<<setw(10)<<" Input"<<setw(10)<<"Next State"<<setw(10)<<"\n";
 	for (int i = 0; i < gotoList.size(); i++)
 	{
 		f << gotoList[i].originState <<setw(10)<< " , " <<gotoList[i].input<<setw(10)<<" => " << gotoList[i].finalState<<setw(10)<< "\n";
 	}
 	f.close();
 	actiontable[0][0] = "s 1";
-	cout<<"Input To The Parser: \n ";
+	cout<<"\nInput To The Parser: \n ";
 	cout << str <<"\n\n";
 	return parser(str);
 }
