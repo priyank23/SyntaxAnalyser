@@ -12,7 +12,7 @@ using namespace std;
 //Read the productions list from the file
 vector<string> prod_ar()
 {
-	ifstream fp("./Parser/LetterCFG.txt");
+	ifstream fp("./input/LetterCFG.txt");
 	vector<string> prod;
 	string line;
 
@@ -515,7 +515,7 @@ void SLRParsingTable(map<char, string> followmap)
 	}
 	
 	fstream ag;
-	ag.open("Parsing Table.csv",ios::out);
+	ag.open("./output/Parsing Table.csv",ios::out);
 	ag<<"\nStates V || Symbols->"<<setw(10);
 	for (int h = 0; h < terminals.size(); h++)
 	{
@@ -553,7 +553,7 @@ bool parser(string in)
 	bool xcheck = false;
 
 	fstream f;
-	f.open("ParsingSteps.txt",ios::out);
+	f.open("./output/ParsingSteps.txt",ios::out);
 	f << "Action "<<setw(20)
 				 << "Production/State" <<setw(20)<< "Next Input" <<setw(20)<<" Next State" <<setw(20)<< "\n";
 			;
@@ -724,7 +724,7 @@ bool parse(string str)
 	
 	canonicalSet(&I);
 	fstream f;
-	f.open("StatesFile.txt",ios::out);
+	f.open("./output/StatesFile.txt",ios::out);
 	for (int q = 0; q < canonSet.states.size(); q++)
 	{
 		f <<((q<10)?"0":"")<< q << "  ----  "<<setw(10)<<std::left;
@@ -739,7 +739,7 @@ bool parse(string str)
 	SLRParsingTable(followmap);
 	cout << "\n\n\n";
 	
-	f.open("GotoTransitions.txt",ios::out);
+	f.open("./output/GotoTransitions.txt",ios::out);
 	f<<setw(15)<<"I/P State"<<setw(15)<<" Input"<<setw(15)<<"Next State"<<setw(15)<<"\n";
 	for (int i = 0; i < gotoList.size(); i++)
 	{

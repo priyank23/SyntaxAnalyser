@@ -68,7 +68,7 @@ void populate_keywords(ifstream& keywords_file) {
     dfa_keyword[state-1][line[line.length()-1]-97]=25;
   }
   fstream f;
-  f.open("DFA_for_Lexical.txt",ios::out);
+  f.open("./output/DFA_for_Lexical.txt",ios::out);
   f<<"DFA created for keywords (Transition Table (50 X 26)):\n\n";
   for(int i=0;i<25;i++)
   {
@@ -463,25 +463,25 @@ void write_output_file(ofstream& fout) {
 }
 
 // the main driver function
-bool lex() {
+bool lex(string inputfile) {
 
   ifstream ifile;
   ofstream ofile;
-  ifile.open("./LexicalAnalyser/keywords.txt");
+  ifile.open("./input/keywords.txt");
   if (!ifile) {
     cout << "Error opening keywords file. Aborting!\n";
     return false;
   }
   populate_keywords(ifile);
   ifile.close();
-  ifile.open("./LexicalAnalyser/input.cpp");
+  ifile.open(inputfile);
   if (!ifile) {
     cout << "Error opening input file to analyse. Aborting!\n";
     return false;
   }
   parse_input_file(ifile);
   ifile.close();
-  ofile.open("./LexicalAnalyser/output.txt");
+  ofile.open("./output/tokens.txt");
   write_output_file(ofile);
   ofile.close();
   cout << " Lexical Analysis Completed !! \n";
